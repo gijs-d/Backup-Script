@@ -6,23 +6,23 @@ fs.promises.exists = async (f) => {
     } catch {
         return false;
     }
-}
+};
 
 const {
     inputDir, outputDir, writeFiles,
     showNewFileName, ignore, logPath,
     showNewDirName, showUpdatedFileName
-} = require('./config')
+} = require('./config');
 
 let size = 0;
-let msize = [0, 'file'];
-let changedFiles = [0, 0];
+const msize = [0, 'file'];
+const changedFiles = [0, 0];
 let changedDirs = 0;
 
 backup();
 
 async function backup() {
-    let files = await fs.promises.readdir(inputDir);
+    const files = await fs.promises.readdir(inputDir);
     console.log(files);
     if (await fs.promises.exists(`${outputDir}`)) {
         console.log('ouput file exsist');;
@@ -30,7 +30,7 @@ async function backup() {
         if (writeFiles) {
             await fs.promises.mkdir(`${outputDir}`);
         }
-        console.log('ouput file created')
+        console.log('ouput file created');
     }
     console.time('backup time');
     for (const f of files.reverse()) {
@@ -46,9 +46,9 @@ async function backup() {
 }
 
 async function checkdir(path, dir) {
-    if (logPath) console.log({ path, dir });
-    if (ignore.includes(dir)) return true;
-    if (ignore.find(i => dir.includes(i))) return true;
+    if (logPath) { console.log({ path, dir }); }
+    if (ignore.includes(dir)) { return true; }
+    if (ignore.find(i => dir.includes(i))) { return true; }
     const stats = await fs.promises.stat(`${inputDir}/${path != '' ? path + '/' : ''}${dir}`);
     if (!stats.isDirectory()) {
         await backupFile(stats, path, dir);
@@ -66,22 +66,19 @@ async function backupFile(stats, path, dir) {
     if (await fs.promises.exists(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`)) {
         let same = true;
         if (!dir.includes('.mp4') && !dir.includes('.mp3') && !dir.includes('.jpg')) {
-            let data1 = await fs.promises.readFile(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`);
-            let data2 = await fs.promises.readFile(`${inputDir}/${path != '' ? path + '/' : ''}${dir}`);
+            const data1 = await fs.promises.readFile(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`);
+            const data2 = await fs.promises.readFile(`${inputDir}/${path != '' ? path + '/' : ''}${dir}`);
             same = data1.equals(data2);
         }
         if (!same) {
-            if (showUpdatedFileName) console.log(`changed ${path} ${dir}`);
+            if (showUpdatedFileName) { console.log(`changed ${path} ${dir}`); }
             changedFiles[0]++;
             changedFiles[1] += stats.size;
-            if (writeFiles)
-                await fs.promises.copyFile(`${inputDir}/${path !== '' ? path + '/' : ''}${dir}`, `${outputDir}/${path !== '' ? path + '/' : ''}${dir}`);
+            if (writeFiles) { await fs.promises.copyFile(`${inputDir}/${path !== '' ? path + '/' : ''}${dir}`, `${outputDir}/${path !== '' ? path + '/' : ''}${dir}`); }
         }
     } else {
-        if (writeFiles)
-            await fs.promises.copyFile(`${inputDir}/${path !== '' ? path + '/' : ''}${dir}`, `${outputDir}/${path !== '' ? path + '/' : ''}${dir}`);
-        if (showNewFileName)
-            console.log('new file ', path, dir);
+        if (writeFiles) { await fs.promises.copyFile(`${inputDir}/${path !== '' ? path + '/' : ''}${dir}`, `${outputDir}/${path !== '' ? path + '/' : ''}${dir}`); }
+        if (showNewFileName) { console.log('new file ', path, dir); }
         changedFiles[0]++;
         changedFiles[1] += stats.size;
     }
@@ -90,12 +87,11 @@ async function backupFile(stats, path, dir) {
 async function backupDir(stats, path, dir) {
     if (!(await fs.promises.exists(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`))) {
         changedDirs++;
-        if (writeFiles)
-            fs.promises.mkdir(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`);
-        if (showNewDirName) console.log('new dir ', path, dir);
+        if (writeFiles) { fs.promises.mkdir(`${outputDir}/${path !== '' ? path + '/' : ''}${dir}`); }
+        if (showNewDirName) { console.log('new dir ', path, dir); }
     }
-    let files = await fs.promises.readdir(`${inputDir}/${path}/${dir}`);
+    const files = await fs.promises.readdir(`${inputDir}/${path}/${dir}`);
     for (const f of files.reverse()) {
-        await checkdir(`${path}/${dir}`, f)
+        await checkdir(`${path}/${dir}`, f);
     }
 }
