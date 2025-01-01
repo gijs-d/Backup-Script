@@ -68,7 +68,7 @@ module.exports = {
 -   **ignore**:  
     An array of file and directory names to ignore during the backup process.
 
-    ## Running the Project
+## Running the Project
 
 1. **Install Dependencies**: Make sure you have Node.js installed.
 
