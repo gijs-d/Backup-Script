@@ -4,88 +4,109 @@ This project is a backup script that copies files from a specified input directo
 
 ## Configuration
 
-You can configure the project in the `config.js` file. Here are the available configuration options:
+You can configure the project in the `src/config.js` file. Here are the available configuration options:
 
 ```javascript
 module.exports = {
-    inputDir: '/media/gijs/GijSchijf/Documenten/projects',  // Directory to back up
-    outputDir: 'media/gijs/gusb/backups/projects',          // Directory to store backups
+    inputDir: '/media/gijs/GijSchijf/Documenten/projects', // Directory to back up
+    outputDir: '/media/gijs/gusb/backups/projects', // Directory to store backups
 
-    writeFiles: false,                                      // Set to true to enable writing files; no files/dirs will be changed if set to false
+    writeFiles: false, // Set to true to enable writing files/dirs; no files/dirs will be changed if set to false
 
-    showNewFileName: false,                                 // Log new file names
-    showUpdatedFileName: false,                             // Log updated file names
-    showNewDirName: false,                                  // Log new directory names
+    logNewFileName: true, // Log new file names
+    logUpdatedFileName: true, // Log updated file names
+    logNewDirName: true, // Log new directory names
+    logNewDirNameHideSubs: false, // Hide the logging of subdirectory names when logging new directories
 
-    logPath: false,                                         // Log the path of files and directories being processed
+    logPath: false, // Log the path of files and directories being processed
 
-    ignore: [                                               // List of files/directories to ignore
-         'node_modules',
-         '.batch',
-         '.csv',
-         '.idea',
-    ],
+    logToFile: false, // Save the logs to a file
+
+    printSizeOfAllFilesByType: false, // Print the sizes of all files categorized by type
+    printSizeOfNewFilesByType: true, // Print the sizes of new files categorized by type
+
+    // List of files/directories to ignore
+    ignore: ['node_modules', '.batch', '.csv', '.idea', '.zip', 'dist'],
 };
 ```
 
 ### Parameters
 
-- **inputDir**:  
-  The directory from which files will be backed up.
+-   **inputDir**:  
+    The directory from which files will be backed up.
 
-- **outputDir**:  
-  The directory where backups will be stored.
+-   **outputDir**:  
+    The directory where backups will be stored.
 
-- **writeFiles**:  
-  Set to `true` to create or overwrite files in the output directory; no files or directories will be changed if set to false.
+-   **writeFiles**:  
+    Create or overwrite files or directories in the output directory; no files or directories will be changed if set to `false`.
 
-- **showNewFileName**:  
-  If set to `true`, logs the names of newly created files.
+-   **logNewFileName**:  
+    Logs the names of newly created files.
 
-- **showUpdatedFileName**:  
-  If set to `true`, logs the names of updated files.
+-   **logUpdatedFileName**:  
+    Logs the names of updated files.
 
-- **showNewDirName**:  
-  If set to `true`, logs the names of newly created directories.
+-   **logNewDirName**:  
+    Logs the names of newly created directories.
 
-- **logPath**:  
-  If set to `true`, logs the paths of the files and directories being processed.
+-   **logNewDirNameHideSubs**:  
+    Hide the logging of subdirectory names when logging new directories
 
-- **ignore**:  
-  An array of file and directory names to ignore during the backup process.
+-   **logPath**:  
+    Logs the paths of the files and directories being processed.
 
-  ## Running the Project
+-   **logToFile**:  
+    Save the logs to a file (`logs.txt`).
+
+-   **printSizeOfAllFilesByType**:  
+    Print the sizes of all files categorized by type.
+
+-   **printSizeOfNewFilesByType**:  
+    Print the sizes of new files categorized by type.
+
+-   **ignore**:  
+    An array of file and directory names to ignore during the backup process.
+
+    ## Running the Project
 
 1. **Install Dependencies**: Make sure you have Node.js installed.
 
 2. **Run the Script**: Execute the script to start the backup process:
 
-   ```bash
-   npm start
-   ```
+    ```bash
+    npm start
+    ```
 
 3. **View Results**: After the script completes, the output will be displayed in the console, showing details about the backup process.
 
 ## Output
 
 ```plaintext
--------------------------------------------
-backup time: 4.369s
-total size: 4715.05 mb
-biggest file: 173.87 mb bot_v3.0 - kopie.zip
-new dirs 16359
-new files 48843 4696.94 mb
--------------------------------------------
+2025-01-01T23:02:15 : Start Backup ;
+2025-01-01T23:02:15 | Input Dir : /media/gijs/GijSchijf/Documenten/projects ;
+2025-01-01T23:02:15 | Output Dir : /media/gijs/gusb/backups/projects ;
+
+2025-01-01T23:03:02 | Changed : _._Tools/files/BackupScript  README.md ;
+2025-01-01T23:03:02 | New file : _._Tools/files/BackupScript  logs.txt ;
+2025-01-01T23:03:02 | Changed : _._Tools/files/BackupScript/src  config.js ;
+2025-01-01T23:03:02 | Changed : _._Tools/files/BackupScript/src  index.js ;
+
+2025-01-01T23:03:32 : Backup Completed ;
+--------------------------------------------------------
+Backup time: 1:16.897 (m:ss.mmm)
+
+Total dirs: 18281
+Total files: 51639  5.13 GB
+Largest file: 182.32 MB  bot_v3.0 - kopie.zip
+
+New dirs: 0
+New files: 4  13.14 KB
+Largest new file: 7.28 KB  index.js
+--------------------------------------------------------
+
+Size of new files by type:
+ .js:    8.27 KB
+.md:     4.14 KB
+.txt:    723.00 B
 ```
-
-### Output Details
-
- - **`backup time`**: The total time taken to complete the backup process.  
-
- - **`total size`**: The total size of all files backed up, displayed in megabytes (MB).  
-
- - **`biggest file`**: The size and name of the largest file that was backed up.  
-
- - **`new dirs`**: The total number of new directories created in the output directory.  
-
- - **`new files`**: The total number of new files created in the output directory, along with their total size.  

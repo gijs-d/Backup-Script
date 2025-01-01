@@ -1,0 +1,8 @@
+2025-01-01T23:06:53 : Start Backup ; 
+2025-01-01T23:06:53 | Input Dir : /media/gijs/GijSchijf/Documenten/projects ; 
+2025-01-01T23:06:53 | Output Dir : /media/gijs/gusb/backups/projects ; 
+2025-01-01T23:07:49 | Changed : _._Tools/files/BackupScript  README.md ; 
+2025-01-01T23:07:49 | New file : _._Tools/files/BackupScript  logs.txt ; 
+2025-01-01T23:07:49 | Changed : _._Tools/files/BackupScript/src  config.js ; 
+2025-01-01T23:07:49 | Changed : _._Tools/files/BackupScript/src  index.js ; 
+2025-01-01T23:08:19 : Backup Completed ; 
