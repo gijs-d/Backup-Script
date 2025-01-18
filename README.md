@@ -99,10 +99,12 @@ Backup time: 1:16.897 (m:ss.mmm)
 Total dirs: 18281
 Total files: 51639  5.13 GB
 Largest file: 182.32 MB  bot_v3.0 - kopie.zip
+_._Tools/crypto
 
 New dirs: 0
 New files: 4  13.14 KB
 Largest new file: 7.28 KB  index.js
+ _._Tools/files/BackupScript
 --------------------------------------------------------
 
 Size of new files by type:

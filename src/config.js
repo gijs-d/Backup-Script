@@ -4,10 +4,10 @@ module.exports = {
 
     writeFiles: false, // Set to true to enable writing files/dirs; no files/dirs will be changed if set to false
 
-    logNewFileName: true, // Log new file names
-    logUpdatedFileName: true, // Log updated file names
+    logNewFileName: false, // Log new file names
+    logUpdatedFileName: false, // Log updated file names
     logNewDirName: true, // Log new directory names
-    logNewDirNameHideSubs: false, // Hide the logging of subdirectory names when logging new directories
+    logNewDirNameHideSubs: true, // Hide the logging of subdirectory names when logging new directories
 
     logPath: false, // Log the path of files and directories being processed
 

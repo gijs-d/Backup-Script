@@ -23,8 +23,11 @@ cli.saveToFile = logToFile;
 let changedDirs = 0;
 let lastPath;
 const size = [0, 0, 0];
-const maxSize = [0, 'file'];
-const changedFiles = [0, 0, [0, 'file']];
+const maxSize = {
+    total: { size: 0, file: '', path: '' },
+    new: { size: 0, file: '', path: '' },
+};
+const changedFiles = [0, 0];
 const typeSize = {};
 const totalTypeSize = {};
 
@@ -45,15 +48,18 @@ async function backup() {
     }
     console.log();
     cli.custom('', 'green', 'Backup Completed');
-    console.log('--------------------------------------------------------');
+    const dashLength = Math.max(maxSize.total.path.length, maxSize.new.path.length, 60);
+    console.log(new Array(dashLength).fill('-').join(''));
     console.timeEnd('Backup time');
     console.log(`\nTotal dirs: ${size[2]}`);
     console.log(`Total files: ${size[1]}  ${printBytes(size[0])}`);
-    console.log(`Largest file: ${printBytes(maxSize[0])}  ${maxSize[1]}`);
+    console.log(`Largest file: ${printBytes(maxSize.total.size)}  ${maxSize.total.file}`);
+    console.log(maxSize.total.path);
     console.log(`\nNew dirs: ${changedDirs}`);
     console.log(`New files: ${changedFiles[0]}  ${printBytes(changedFiles[1])}`);
-    console.log(`Largest new file: ${printBytes(changedFiles[2][0])}  ${changedFiles[2][1]}`);
-    console.log('--------------------------------------------------------\n');
+    console.log(`Largest new file: ${printBytes(maxSize.new.size)}  ${maxSize.new.file}`);
+    console.log(maxSize.new.path);
+    console.log(new Array(dashLength).fill('-').join(''), '\n');
     if (printSizeOfAllFilesByType) {
         printtTypeSize('Size of all files by type:', totalTypeSize);
         console.log();
@@ -69,7 +75,7 @@ function printtTypeSize(title, obj) {
         '\n',
         Object.entries(obj)
             .sort((a, b) => b[1] - a[1])
-            .map(type => `${type[0]}:\t ${printBytes(type[1])}`)
+            .map((type) => `${type[0]}:\t ${printBytes(type[1])}`)
             .join('\n')
     );
 }
@@ -96,7 +102,7 @@ async function checkdir(newPath, dir) {
     if (ignore.includes(dir)) {
         return true;
     }
-    if (ignore.find(i => dir.includes(i))) {
+    if (ignore.find((i) => dir.includes(i))) {
         return true;
     }
     const stats = await fs.promises.stat(`${inputDir}/${newPath && `${newPath}/`}${dir}`);
@@ -114,9 +120,8 @@ async function backupFile(stats, newPath, dir) {
         const extension = path.extname(dir).toLowerCase();
         totalTypeSize[extension] = (totalTypeSize[extension] || 0) + stats.size;
     }
-    if (stats.size > maxSize[0]) {
-        maxSize[0] = stats.size;
-        maxSize[1] = dir;
+    if (maxSize.total.size < stats.size) {
+        maxSize.total = { size: stats.size, file: dir, path: newPath };
     }
     const fileExists = await pathExists(`${outputDir}/${newPath && `${newPath}/`}${dir}`);
     if (fileExists) {
@@ -137,7 +142,7 @@ async function updatedFile(stats, dir, newPath) {
         if (logUpdatedFileName) {
             cli.custom('Changed', 'cyan', `${newPath}  ${dir}`);
         }
-        handleNewFile(stats, dir);
+        handleNewFile(stats, dir, newPath);
         if (writeFiles) {
             await fs.promises.copyFile(
                 `${inputDir}/${newPath && `${newPath}/`}${dir}`,
@@ -147,15 +152,15 @@ async function updatedFile(stats, dir, newPath) {
     }
 }
 
-function handleNewFile(stats, dir) {
+function handleNewFile(stats, dir, newPath) {
     if (printSizeOfNewFilesByType) {
         const extension = path.extname(dir).toLowerCase();
         typeSize[extension] = (typeSize[extension] || 0) + stats.size;
     }
     changedFiles[0]++;
     changedFiles[1] += stats.size;
-    if (changedFiles[2][0] < stats.size) {
-        changedFiles[2] = [stats.size, dir];
+    if (maxSize.new.size < stats.size) {
+        maxSize.new = { size: stats.size, file: dir, path: newPath };
     }
 }
 
@@ -203,9 +208,9 @@ async function newFile(stats, dir, newPath) {
         );
     }
     if (logNewFileName) {
-        cli.custom('New file', 'green', `${newPath}  ${dir}`);
+        cli.custom('New File', 'green', `${newPath}  ${dir}`);
     }
-    handleNewFile(stats, dir);
+    handleNewFile(stats, dir, newPath);
 }
 
 async function backupDir(stats, newPath, dir) {
@@ -222,7 +227,7 @@ async function backupDir(stats, newPath, dir) {
             }
             if (log) {
                 lastPath = `${newPath}/${dir}`;
-                cli.custom('New dir', 'brightGreen', `${newPath}  ${dir}`);
+                cli.custom('New Dir', 'brightGreen', `${newPath}  ${dir}`);
             }
         }
     }
